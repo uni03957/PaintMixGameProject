@@ -1,0 +1,72 @@
+import numpy as np
+import streamlit as st
+import matplotlib.pyplot as plt
+from io import BytesIO
+from matplotlib.patches import Rectangle
+from collections import Counter
+
+COLOR_MAP = {
+    0: (255, 0, 0), # Red
+    1: (0, 255, 0), # Green 
+    2: (0, 0, 255), # Blue
+    3: (255, 0, 255), # Magenta
+    4: (255, 255, 0), # Yellow
+    5: (0, 255, 255), # Cyan
+    6: (0, 0, 0) # Black
+}
+
+def toColorGrid(colorSequence: list[int], shape=(8, 16)) -> np.ndarray:
+    colorArray = []
+    for index in colorSequence:
+        colorArray.append(COLOR_MAP[index])
+    # RGB 2차원 배열로 변환
+    colorArray = np.array(colorArray, dtype=np.uint8).reshape(shape[0], shape[1], 3) 
+
+    return colorArray
+
+
+# ChatGPT가 알려준 사각화 방식
+def showColorRectangleGrid(colorArray: np.ndarray, colorSequence: list[int], r, x0):
+    # RGB 값 제외 가져와 행과 열로 사용
+    rows, cols = colorArray.shape[:2]
+
+    # 색상 수 세기
+    countDict = Counter(colorSequence)
+    colorCount = [countDict.get(i, 0) for i in range(7)]
+
+    
+    fig, (ax1, ax2)= plt.subplots(1, 2, figsize=(10, 6))
+
+    for i in range(rows):
+        for j in range(cols):
+            rgb = tuple(colorArray[i, j] / 255.0)  # matplotlib: 색상값 0~1 정규화
+            rect = Rectangle((j, rows - i - 1), 1, 1, facecolor=rgb) # matplotlib은 아래에서 위로 인덱싱하는 구조라 반대로.
+            ax1.add_patch(rect)
+    # 제목 또는 정보 텍스트 삽입
+    ax1.set_title(f"Color Grid (x₀ = {x0}, r = {r})")
+
+    ax1.set_xlim(0, cols)
+    ax1.set_ylim(0, rows)
+    ax1.set_aspect('equal')
+    ax1.axis('off')
+
+    colorLabel = ['Red', 'Green', 'Blue', 'Magenta', 'Yellow', 'Cyan', 'Black']
+    colors = ['r', 'g', 'b', 'm', 'y', 'c', 'k']
+
+    x = np.arange(7)
+    ax2.bar(x, colorCount, color=colors)
+    ax2.set_xticks(x, colorLabel)
+    ax2.set_title("Color Distribution")
+    ax2.set_xlabel("Color")
+    ax2.set_ylabel("Count")
+
+    plt.tight_layout()
+    st.pyplot(fig)
+
+
+    buf = BytesIO()
+    plt.savefig(buf, format="png", dpi=300, bbox_inches='tight')
+    buf.seek(0)
+    plt.close()
+
+    return buf
