@@ -26,7 +26,7 @@ def toColorGrid(colorSequence: list[int], shape=(8, 16)) -> np.ndarray:
 
 
 # ChatGPT가 알려준 사각화 방식
-def showColorRectangleGrid(colorArray: np.ndarray, colorSequence: list[int], r, x0):
+def toConvertRectangleGrid(colorArray: np.ndarray, colorSequence: list[int], r, x0):
     # RGB 값 제외 가져와 행과 열로 사용
     rows, cols = colorArray.shape[:2]
 
@@ -61,12 +61,17 @@ def showColorRectangleGrid(colorArray: np.ndarray, colorSequence: list[int], r, 
     ax2.set_ylabel("Count")
 
     plt.tight_layout()
+    return fig
+
+
+
+def renderColorGrid(fig):
     st.pyplot(fig)
 
-
+def saveImage(fig):
     buf = BytesIO()
-    plt.savefig(buf, format="png", dpi=300, bbox_inches='tight')
+    fig.savefig(buf, format="png", dpi=300, bbox_inches='tight')
     buf.seek(0)
-    plt.close()
+    plt.close(fig)
 
     return buf
