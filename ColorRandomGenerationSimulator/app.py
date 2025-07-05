@@ -5,7 +5,7 @@ import logistic as lg
 
 def buildLUT(cdf, size=256):
     """빠른 탐색을 위한 LUT 테이블을 생성하는 함수."""
-    # 작은 numpy 배열 룩업테이블을 통해 빠른 탐색.
+    # 1바이트의 작은 numpy 배열 룩업테이블을 통해 빠른 탐색.
     # 정적인 룩업테이블이고, 모바일 경량화를 위해 1바이트만큼 메모리에 유지.
     # CDF의 비율에 맞게 색상 인덱스를 저장함.
     lut = np.zeros(size, dtype=int)
@@ -18,15 +18,17 @@ def buildLUT(cdf, size=256):
         lut[i] = next((index for index, threshold in enumerate(cdf) if value <= threshold), 0)
     return lut
 
+# 색상 비율과 CDF.
+# 인덱스 순서: Red, Green, Blue, Magenta, Yellow, Cyan, Black.
+COLOR_RATIOS = [0.25, 0.25, 0.25, 0.08, 0.08, 0.08, 0.01]
+cdf = np.cumsum(COLOR_RATIOS)
+
 st.sidebar.title("물감 랜덤 생성 입력값")
 
 x0 = st.slider("시드 값", min_value=0.35, max_value=0.48, value=0.35, step=0.005)
 r = st.slider("로지스틱 파라미터 r", min_value=3.7, max_value=4.0, value=3.7, step=0.01)
 
-# 색상 비율과 CDF.
-# 인덱스 순서: Red, Green, Blue, Magenta, Yellow, Cyan, Black.
-colorRatios = [0.25, 0.25, 0.25, 0.08, 0.08, 0.08, 0.01]
-cdf = np.cumsum(colorRatios)
+
 
 imageBuf = None
 
@@ -34,7 +36,7 @@ imageBuf = None
 
 if st.button("시뮬레이션 실행"):
     logSequence = lg.logisticMapList(r,x0)
-    lutSequence = lg.mappingLUT(logSequence, buildLUT())
+    lutSequence = lg.mappingLUT(logSequence, buildLUT(cdf))
     fig = cv.createColorGridFigure(cv.toColorGrid(lutSequence), lutSequence, r, x0)
     cv.renderColorGrid(fig)
     imageBuf = cv.saveImage(fig)
