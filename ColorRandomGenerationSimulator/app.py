@@ -3,6 +3,7 @@ import numpy as np
 import colorVisualize as cv
 import logistic as lg
 
+@st.cache_data
 def buildLUT(cdf, size=256):
     """빠른 탐색을 위한 LUT 테이블을 생성하는 함수."""
     # 1바이트의 작은 numpy 배열 룩업테이블을 통해 빠른 탐색.
