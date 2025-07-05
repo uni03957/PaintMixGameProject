@@ -3,6 +3,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from io import BytesIO
 from matplotlib.patches import Rectangle
+from matplotlib.figure import Figure
 from collections import Counter
 
 COLOR_MAP = {
@@ -27,7 +28,7 @@ def toColorGrid(colorSequence: list[int], shape=(8, 16)) -> np.ndarray:
 
 
 # ChatGPT가 알려준 사각화 방식
-def createColorGridFigure(colorArray: np.ndarray, colorSequence: list[int], r, x0) -> plt.subplot:
+def createColorGridFigure(colorArray: np.ndarray, colorSequence: list[int], r, x0) -> Figure:
     """2차원 배열을 사각형 타일화하고, 타일로 시각화된 이미지와 통계 그래프를 subplot으로 만드는 함수."""
     # RGB 값 제외 가져와 행과 열로 사용
     rows, cols = colorArray.shape[:2]
@@ -52,12 +53,12 @@ def createColorGridFigure(colorArray: np.ndarray, colorSequence: list[int], r, x
     ax1.set_aspect('equal')
     ax1.axis('off')
 
-    colorLabel = ['Red', 'Green', 'Blue', 'Magenta', 'Yellow', 'Cyan', 'Black']
-    colors = ['r', 'g', 'b', 'm', 'y', 'c', 'k']
+    COLOR_LABEL = ['Red', 'Green', 'Blue', 'Magenta', 'Yellow', 'Cyan', 'Black']
+    COLOR_CODES = ['r', 'g', 'b', 'm', 'y', 'c', 'k']
 
     x = np.arange(7)
-    ax2.bar(x, colorCount, color=colors)
-    ax2.set_xticks(x, colorLabel)
+    ax2.bar(x, colorCount, color=COLOR_CODES)
+    ax2.set_xticks(x, COLOR_LABEL)
     ax2.set_title("Color Distribution")
     ax2.set_xlabel("Color")
     ax2.set_ylabel("Count")
