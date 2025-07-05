@@ -16,6 +16,7 @@ COLOR_MAP = {
 }
 
 def toColorGrid(colorSequence: list[int], shape=(8, 16)) -> np.ndarray:
+    """RGB 값을 지닌 2차원 배열로 만드는 함수."""
     colorArray = []
     for index in colorSequence:
         colorArray.append(COLOR_MAP[index])
@@ -26,7 +27,8 @@ def toColorGrid(colorSequence: list[int], shape=(8, 16)) -> np.ndarray:
 
 
 # ChatGPT가 알려준 사각화 방식
-def toConvertRectangleGrid(colorArray: np.ndarray, colorSequence: list[int], r, x0):
+def createColorGridFigure(colorArray: np.ndarray, colorSequence: list[int], r, x0) -> plt.subplot:
+    """2차원 배열을 사각형 타일화하고, 타일로 시각화된 이미지와 통계 그래프를 subplot으로 만드는 함수."""
     # RGB 값 제외 가져와 행과 열로 사용
     rows, cols = colorArray.shape[:2]
 
@@ -66,9 +68,11 @@ def toConvertRectangleGrid(colorArray: np.ndarray, colorSequence: list[int], r, 
 
 
 def renderColorGrid(fig):
+    """해당 subplot을 표시하는 함수."""
     st.pyplot(fig)
 
 def saveImage(fig):
+    """해당 subplot을 이미지 저장을 위해 버퍼에 담는 함수."""
     buf = BytesIO()
     fig.savefig(buf, format="png", dpi=300, bbox_inches='tight')
     buf.seek(0)
