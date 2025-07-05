@@ -27,19 +27,21 @@ for i in range(LUT_SIZE):
     # CDF의 임계점과 비교해 룩업테이블을 완성.
     value = i / (LUT_SIZE - 1) 
 
-    # 0~6까지의 인덱스는 색상.
-    for index, threshold in enumerate(cdf):
-        if value <= threshold:
-            LUT[i] = index
-            break
+    # 0~6까지의 인덱스는 색상. 기본 값은 0으로 설정.
+    LUT[i] = next((index for index, threshold in enumerate(cdf) if value <= threshold), 0)
+
 
 
 if st.button("시뮬레이션 실행"):
     logSequence = lg.logisticMapList(r,x0)
     lutSequence = lg.mappingLUT(logSequence, LUT)
-    imageBuf = cv.showColorRectangleGrid(cv.toColorGrid(lutSequence), lutSequence, r, x0)
+    fig = cv.toConvertRectangleGrid(cv.toColorGrid(lutSequence), lutSequence, r, x0)
+    cv.renderColorGrid(fig)
+    imageBuf = cv.saveImage(fig)
+
     
 st.write(f"선택된 시드: {x0}, 선택된 파라미터 r: {r}")
+
 
 if imageBuf is not None:
     st.download_button(
