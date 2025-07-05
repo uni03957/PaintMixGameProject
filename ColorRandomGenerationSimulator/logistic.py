@@ -1,10 +1,16 @@
 import numpy as np
 
-def logisticMapList(r: float, x0: float) -> list[float]:
-    # 시드로 로지스틱 맵을 200번 계산해서, 수열 리스트로 저장 후 반환.
+def logisticMapList(r: float, x0: float, count = 128) -> list[float]:
+    # 시드로 로지스틱 맵을 128번 계산해서, 수열 리스트로 저장 후 반환.
     x = x0
+    # ChatGPT가 제안한 초반 수렴 구간 제외하고 반영.
+    burnInNum = 20
+
+    for i in range(burnInNum):
+        x = r * x * (1 - x)
+
     sequence = []
-    for i in range(128):
+    for i in range(count):
         x = r * x * (1-x)
         sequence.append(x)
     return sequence
