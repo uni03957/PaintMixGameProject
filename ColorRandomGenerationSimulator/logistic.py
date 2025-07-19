@@ -25,4 +25,3 @@ def mappingLUT(sequence: np.ndarray, lut:np.ndarray) -> np.ndarray:
     colorIndices = np.clip((sequence * 255).astype(int), 0, 255)
 
     # 벡터화 인덱싱
-    return lut[colorIndices] 
